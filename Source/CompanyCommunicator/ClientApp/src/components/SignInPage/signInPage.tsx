@@ -26,7 +26,7 @@ const SignInPage: React.FunctionComponent<RouteComponentProps> = props => {
             }
         });
     }
-
+ 
     return (
         <div className="sign-in-content-container">
             <Text

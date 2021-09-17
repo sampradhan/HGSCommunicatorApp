@@ -20,49 +20,54 @@ AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (text, result) {
 
 export const getInitAdaptiveCard = (t: TFunction) => {
     const titleTextAsString = t("TitleText");
-    
-        return (
-            {
-                "type": "AdaptiveCard",
-                "body": [
-                    {
-                        "type": "TextBlock",
-                        "weight": "Bolder",
-                        "text": titleTextAsString,
-                        "size": "ExtraLarge",
-                        "wrap": true
-                    },
-                    {
-                        "type": "Image",
-                        "spacing": "Default",
-                        "url": "",
-                        "msTeams": {
-                            "allowExpand": true
-                          },
-                        "size": "Stretch",
-                        "width": "400px",
-                        "altText": ""
-                    },
-                    {
-                        "type": "TextBlock",
-                        "text": "",
-                        "wrap": true
-                    },
-                    {
-                        "type": "TextBlock",
-                        "wrap": true,
-                        "size": "Small",
-                        "weight": "Lighter",
-                        "text": ""
-                    }
-                ],
-                "msteams": {
-                    "width": "Full"
+
+    return (
+        {
+            "type": "AdaptiveCard",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "weight": "Bolder",
+                    "text": titleTextAsString,
+                    "size": "ExtraLarge",
+                    "wrap": true
                 },
-                "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
-                "version": "1.2"
-            }
-        );
+                {
+                    "type": "Image",
+                    "spacing": "Default",
+                    "url": "",
+                    "msTeams": {
+                        "allowExpand": true
+                    },
+                    "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "title": "Image",
+                        "url": ""
+                      },
+                    "size": "Stretch",
+                    "width": "300px",
+                    "altText": ""
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "wrap": true,
+                    "size": "Small",
+                    "weight": "Lighter",
+                    "text": ""
+                }
+            ],
+            "msteams": {
+                "width": "Full"
+            },
+            "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.4"
+        }
+    );
 }
 
 export const getCardTitle = (card: any) => {
@@ -77,8 +82,13 @@ export const getCardImageLink = (card: any) => {
     return card.body[1].url;
 }
 
+export const getCardImageselectActionLink = (card: any) => {
+    return card.body[1].selectAction.url;
+}
+
 export const setCardImageLink = (card: any, imageLink?: string) => {
     card.body[1].url = imageLink;
+    card.body[1].selectAction.url = imageLink;
 }
 
 export const getCardSummary = (card: any) => {
@@ -108,7 +118,7 @@ export const getCardBtnLink = (card: any) => {
 // set the values collection with buttons to the card actions
 export const setCardBtns = (card: any, values: any[]) => {
     if (values !== null) {
-            card.actions = values;
+        card.actions = values;
     } else {
         delete card.actions;
     }

@@ -199,7 +199,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             response.data.sentDate = formatDate(response.data.sentDate);
             response.data.succeeded = formatNumber(response.data.succeeded);
             response.data.failed = formatNumber(response.data.failed);
-            console.log("view status", response.data)
+            // console.log("view status", response.data)
             response.data.unknown = response.data.unknown && formatNumber(response.data.unknown);
             if (response.data.templateType === this.localize("Q&AUpload")) {
                 if (response.data.summary !== "") {

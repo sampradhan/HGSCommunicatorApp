@@ -34,27 +34,6 @@ class Configuration extends React.Component<{}, IConfigState> {
     }
 
 
-    // submit(){
-    //     console.log("submit");
-    //     // microsoftTeams.initialize();
-    //     microsoftTeams.settings.setValidityState(true);
-    //     this.save()
-    // }
-
-    //  save(){
-    //     console.log("save");
-        
-    //     microsoftTeams.settings.registerOnSaveHandler((saveEvent) => {
-    //         microsoftTeams.settings.setSettings({
-    //             websiteUrl: this.state.url,
-    //             contentUrl: this.state.url,
-    //             entityId: "Company_Communicator_App",
-    //             suggestedDisplayName: "Company Communicator"
-    //         });
-    //         saveEvent.notifySuccess();
-    //     });
-    // }
-
     public render(): JSX.Element {
         return (
             <div className="configContainer">

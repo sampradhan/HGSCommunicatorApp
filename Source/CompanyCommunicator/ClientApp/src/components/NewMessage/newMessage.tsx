@@ -257,9 +257,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             card: this.card,
                             exists: false,
                             loader: false,
-                            selectedRadioBtn:((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload")))?"teams":"rosters",
-                            teamsOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload")))?true:false,
-                            rostersOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload")))?false:true,
+                            selectedRadioBtn: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? "teams" : "rosters",
+                            teamsOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? true : false,
+                            rostersOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? false : true,
                             allUsersOptionSelected: false,
                             sisterTenantOptionSelected: false,
                             groupsOptionSelected: false
@@ -296,7 +296,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         const image = new Image();
                         image.src = reader.result.toString()
                         image.onload = () => {
-                            if(image.height < 1024 && image.width < 1024 && file.size < 1048576 ){
+                            if (image.height < 1024 && image.width < 1024 && file.size < 1048576) {
                                 var imageFormData = new FormData()
                                 imageFormData.append("file", file);
                                 this.getUploadedFileURL(imageFormData)
@@ -314,7 +314,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 reader.onerror = function (error) {
                     console.log('Error: ', error);
                 };
-                
+
 
 
             }
@@ -332,7 +332,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
             }
             else if (this.state.templateType === this.localize("EmailUpload")) {
-                console.log("email", file)
                 if (file.size < 15728640) {
 
                     var emailFormData = new FormData()
@@ -536,7 +535,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private getItem = async (id: number) => {
         try {
             const response = await getDraftNotification(id);
-            console.log("getItem response", response)
+            // console.log("getItem response", response)
             const draftMessageDetail = response.data;
             let selectedRadioButton = "teams";
             if (draftMessageDetail.rosters.length > 0) {
@@ -546,13 +545,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 selectedRadioButton = "groups";
             }
             else if (draftMessageDetail.allUsers) {
-                if(draftMessageDetail.sendTypeId==='3'){
+                if (draftMessageDetail.sendTypeId === '3') {
                     selectedRadioButton = "allUsers";
                 }
-                else{
+                else {
                     selectedRadioButton = "sistertenant";
                 }
-               
+
             }
 
             // set state based on values returned 
@@ -622,6 +621,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 // this is to ensure compatibility with older versions
                 // if we get empty buttonsJSON and values on buttonTitle and buttonLink, we insert those to values
                 // if not we just use values cause the JSON will be complete over there
+                // console.log("getItem response button", draftMessageDetail.buttons)
+
                 if (draftMessageDetail.buttonTitle && draftMessageDetail.buttonLink && !draftMessageDetail.buttons) {
                     this.setState({
                         values: [{
@@ -636,6 +637,14 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     if (draftMessageDetail.buttons !== null) { //if the database value is not null, parse the JSON to create the button objects
                         this.setState({
                             values: JSON.parse(draftMessageDetail.buttons)
+                        }, () => {
+                            // set the card buttons collection based on the values collection
+                            if (this.state.templateType === this.localize("ImageUpload")) {
+                                setCardBtns(this.card, this.state.values);
+                            }
+                            else if (this.state.templateType === this.localize("PDFUpload")) {
+                                setCardBtnsPDFUpload(this.card, this.state.values);
+                            }
                         });
                     } else { //if the string is null, then initialize the empty collection 
                         this.setState({
@@ -644,13 +653,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     }
                 }
 
-                // set the card buttons collection based on the values collection
-                if (this.state.templateType === this.localize("ImageUpload")) {
-                    setCardBtns(this.card, this.state.values);
-                }
-                else if (this.state.templateType === this.localize("PDFUpload")) {
-                    setCardBtnsPDFUpload(this.card, this.state.values);
-                }
+
                 // else if (this.state.templateType === this.localize("Q&AUpload")) {
                 //     setCardBtnsQuestionAnswer(this.card, this.state.values);
                 // }
@@ -662,7 +665,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     btnTitle: draftMessageDetail.buttonTitle,
                     author: draftMessageDetail.author,
                     allUsersOptionSelected: draftMessageDetail.allUsers,
-                    sisterTenantOptionSelected: draftMessageDetail.sendTypeId==='5',
+                    sisterTenantOptionSelected: draftMessageDetail.sendTypeId === '5',
                     loader: false,
                     card: this.card,
                     emailFileTitle: draftMessageDetail.emailTitle,
@@ -961,12 +964,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             onCheckedValueChange={this.onGroupSelected}
                                             vertical={true}
                                             items={[
-                                                 (((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) && {
+                                                (((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) && {
                                                     name: "teams",
                                                     key: "teams",
                                                     value: "teams",
                                                     label: this.localize("SendToGeneralChannel"),
-                                                    children: (Component  , { name, ...props }) => {
+                                                    children: (Component, { name, ...props }) => {
                                                         return (
                                                             <Flex key={name} column>
                                                                 <Component {...props} />
@@ -1298,7 +1301,17 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
 
         else {
-            return !(title && (this.state.errorButtonUrlMessage === "") && imageLink);
+
+            // if (this.state.values.length > 0) {
+                const btnArraylastIndex = this.state.values.length - 1;
+                const btnTitle = (this.state.values.length > 0) && this.state.values[btnArraylastIndex].title;
+                const btnLink = (this.state.values.length > 0) && this.state.values[btnArraylastIndex].url;
+                return !(title && (this.state.errorButtonUrlMessage === "") && imageLink && ((this.state.values.length > 0) ? (btnTitle && btnLink) : true));
+            // }
+            //  else{
+            //     return !(title && (this.state.errorButtonUrlMessage === "") && imageLink);
+            //  }
+            
         }
 
     }
@@ -1491,8 +1504,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private postDraftMessage = async (draftMessage: IDraftMessage) => {
         try {
-            // console.log("create draft messsage", draftMessage);
-
             await createDraftNotification(draftMessage);
         } catch (error) {
             throw error;
@@ -1916,9 +1927,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            // else if (this.state.templateType === this.localize("Q&AUpload")) {
-            //     setCardBtnsQuestionAnswer(this.card, values);
-            // }
+
             this.setState({
                 card: this.card
             }, () => {
@@ -2117,7 +2126,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.setState({ addQuestionError: "" });
         questionAnswer[i].answer[j] = event
         this.setState({ questionAnswer }, () => {
-            console.log("question answer", this.state.questionAnswer)
+            // console.log("question answer", this.state.questionAnswer)
             const showDefaultCard = (!this.state.title && !this.state.author && !event && questionAnswer.length == 0);
             // setCardTitleQuestionAnswer(this.card, this.state.title);
             //     setCardAuthorQuestionAnswer(this.card, this.state.author);

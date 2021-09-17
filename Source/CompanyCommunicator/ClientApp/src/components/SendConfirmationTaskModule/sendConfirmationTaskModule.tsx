@@ -203,7 +203,7 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
 
     private getItem = async (id: number) => {
         try {
-            const response = await getDraftNotification(id);
+            // const response = await getDraftNotification(id);
             console.log(" send get item", response.data)
             if (response.data.templateType === this.localize("Q&AUpload")) {
                 if (response.data.summary !== "") {
@@ -274,7 +274,6 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
             message: { ...this.state.message, AdaptiveCardContent:JSON.stringify(this.card)}
         },()=>{
             //  console.log("adaptive card",this.card)
-            console.log("check send message",this.state.message)
             sendDraftNotification(this.state.message).then(() => {
                 microsoftTeams.tasks.submitTask();
             });

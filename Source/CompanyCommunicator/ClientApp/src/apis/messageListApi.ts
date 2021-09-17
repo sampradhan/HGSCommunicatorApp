@@ -89,7 +89,7 @@ export const getConsentSummaries = async (id: number): Promise<any> => {
 
 export const sendPreview = async (payload: {}): Promise<any> => {
     let url = baseAxiosUrl + "/draftnotifications/previews";
-    console.log("in api preview",url)
+    // console.log("in api preview",url)
     return await axios.post(url, payload);
 }
 
@@ -100,9 +100,6 @@ export const getAuthenticationConsentMetadata = async (windowLocationOriginDomai
 
 export const sendPdfFile = async (payload: {}): Promise<any> => {
      let url = baseAxiosUrl + "/fileupload/savepdffile";
-    // let url = "https://teamsapp-company-communicator-dev.azurewebsites.net/api/fileupload/savepdffile";
-    console.log("in api",url)
-    // console.log("file",payload)
     return await axios.post(url, payload,);
 }
 

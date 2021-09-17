@@ -770,12 +770,24 @@
               "value": "5"
             },
             {
+              "name": "AuthorAppId",
+              "value": "[parameters('authorClientId')]"
+            },
+            {
+              "name": "AuthorAppPassword",
+              "value": "[parameters('authorClientSecret')]"
+            },
+            {
               "name": "UserAppId",
               "value": "[parameters('userClientId')]"
             },
             {
               "name": "UserAppPassword",
               "value": "[parameters('userClientSecret')]"
+            },
+            {
+              "name": "TenantId",
+              "value": "[parameters('tenantId')]"
             },
             {
               "name": "StorageAccountConnectionString",
@@ -884,6 +896,10 @@
             {
               "name": "UserAppPassword",
               "value": "[parameters('userClientSecret')]"
+            },
+            {
+              "name": "TenantId",
+              "value": "[parameters('tenantId')]"
             },
             {
               "name": "CleanUpScheduleTriggerTime",

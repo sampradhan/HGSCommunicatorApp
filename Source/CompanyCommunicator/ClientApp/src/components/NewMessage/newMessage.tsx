@@ -360,7 +360,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             })
             if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardImageLinkPDFUpload(this.card, pdfImgUrl);
-                let pdfLink = "[View PDF](" + response.data + ")"
+                let pdfLink = "["+this.localize("ViewPDF")+"](" + response.data + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
                 this.updateCard();
             }

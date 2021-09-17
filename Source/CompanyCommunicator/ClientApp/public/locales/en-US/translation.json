@@ -122,5 +122,6 @@
   "SendToAllUsersSisterTenantNote": "Note: This option sends the message to all the users of the sister tenant in the organization who have access to the User app.",
   "MCQLimit":"You can add maximum 2 MCQs",
   "ErrorImageTooBig": "The image is too big! Image dimension must be up to 1024 X 1024 and maximum image size is 1 MB",
-  "ChooseTemplate":"Choose a Template"
+  "ChooseTemplate":"Choose a Template",
+  "ViewPDF":"View PDF"
 }

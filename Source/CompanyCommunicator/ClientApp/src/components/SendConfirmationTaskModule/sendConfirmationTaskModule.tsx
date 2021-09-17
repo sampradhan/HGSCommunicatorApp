@@ -203,8 +203,8 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
 
     private getItem = async (id: number) => {
         try {
-            // const response = await getDraftNotification(id);
-            console.log(" send get item", response.data)
+            const response = await getDraftNotification(id);
+            //console.log(" send get item", response.data)
             if (response.data.templateType === this.localize("Q&AUpload")) {
                 if (response.data.summary !== "") {
                     this.setState({

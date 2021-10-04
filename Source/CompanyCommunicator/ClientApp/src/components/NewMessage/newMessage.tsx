@@ -1326,17 +1326,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
 
         else {
-
-            // if (this.state.values.length > 0) {
             const btnArraylastIndex = this.state.values.length - 1;
             const btnTitle = (this.state.values.length > 0) && this.state.values[btnArraylastIndex].title;
             const btnLink = (this.state.values.length > 0) && this.state.values[btnArraylastIndex].url;
             return !(title && (this.state.errorButtonUrlMessage === "") && imageLink && ((this.state.values.length > 0) ? (btnTitle && btnLink) : true));
-            // }
-            //  else{
-            //     return !(title && (this.state.errorButtonUrlMessage === "") && imageLink);
-            //  }
-
         }
 
     }

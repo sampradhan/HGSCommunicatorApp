@@ -28,6 +28,16 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         public string AadId { get; set; }
 
         /// <summary>
+        /// Gets or sets Email.
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets TenantId.
+        /// </summary>
+        public string TenantId { get; set; }
+
+        /// <summary>
         /// Gets or sets NotificationId.
         /// </summary>
         public string NotificationId { get; set; }
@@ -135,6 +145,16 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         public string AadId { get; set; }
 
         /// <summary>
+        /// Gets or sets Email.
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets TenantId.
+        /// </summary>
+        public string TenantId { get; set; }
+
+        /// <summary>
         /// Gets or sets a FromId.
         /// </summary>
         public string Question0 { get; set; }
@@ -202,6 +222,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         /// 
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets Email.
+        /// </summary>
+        public string Email { get; set; }
 
         /// <summary>
         /// 
@@ -273,5 +298,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         /// </summary>
         public string Answer6 { get; set; }
 
+        /// <summary>
+        /// Gets or sets TenantId.
+        /// </summary>
+        public string TenantId { get; set; }
     }
 }

@@ -114,11 +114,14 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Bot
                 string NotificationId = "";
                 if (turnContext.Activity.Value != null)
                 {
+                    var member1 = await TeamsInfo.GetMemberAsync(turnContext, turnContext.Activity.From.Id, cancellationToken);
                     commandToken = JToken.Parse(turnContext.Activity.Value.ToString());
                     QuestionAnswer questiondata = JsonConvert.DeserializeObject<QuestionAnswer>(turnContext.Activity.Value.ToString());
                     questiondata.FromId = Id;
                     questiondata.Name = name;
                     questiondata.AadId = Aadid;
+                    questiondata.Email = member1.Email;
+                    questiondata.TenantId = member1.TenantId;
                     string valdata = await cloudStorageHelper.MergeAdaptiveCardData(questiondata);
                     var adaptiveCardAttachments = new Attachment()
                     {

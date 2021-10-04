@@ -172,6 +172,9 @@
                 Answer5 = _formData.answer5,
                 Title =_formData.Title,
                 Author=_formData.Author,
+                AadId = _formData.AadId,
+                Email = _formData.Email,
+                TenantId = _formData.TenantId,
             };
             var tableName = "QuestionAnswer";
             CloudStorageAccount storageAccount;
@@ -254,6 +257,8 @@
                            Answer5 = Convert.ToString(s.Answer4),
                            Question6 = s.Question5,
                            Answer6 = Convert.ToString(s.Answer5),
+                           Email = Convert.ToString(s.Email),
+                           TenantId = Convert.ToString(s.TenantId),
                        };
             return dataentity;
         }

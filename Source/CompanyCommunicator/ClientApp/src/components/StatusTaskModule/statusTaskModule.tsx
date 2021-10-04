@@ -230,7 +230,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
     private exportData = async (id: any) => {
         if (this.state.templateType === this.localize("Q&AUpload")) {
             const response = await surveyexport(id);
-            // console.log("servey export result", response)
+             console.log("servey export result", response)
             if(response.data){
                 this.setState({
                     downloadData:response.data

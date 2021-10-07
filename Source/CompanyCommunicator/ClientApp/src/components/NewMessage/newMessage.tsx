@@ -131,6 +131,7 @@ export interface formState {
     sistertenantId?: any,
     imageHeight?: any,
     imageWidth?: any,
+    errorEmailUrlMessage?: string,
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -193,7 +194,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             emailFileTitle: "",
             questionTypeSelectedValueDisable: false,
             sistertenantId: "",
-            emailBodyContent:""
+            emailBodyContent:"",
+            errorEmailUrlMessage:""
         }
         this.fileInput = React.createRef();
         this.handleImagePDFSelection = this.handleImagePDFSelection.bind(this);
@@ -324,7 +326,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 }
                 else {
                     this.setState({
-                        errorImageUrlMessage: this.localize("ErrorEmailTemplateTooBig")
+                        errorEmailUrlMessage: this.localize("ErrorEmailTemplateTooBig")
                     });
                 }
 
@@ -341,7 +343,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         const image = new Image();
                         image.src = reader.result.toString()
                         image.onload = () => {
-                            if (image.height < 1024 && image.width < 1024 && file.size < 1048576) {
+                            if (image.height <= 1024 && image.width <= 1024 && file.size < 1048576) {
                                 var imageFormData = new FormData()
                                 imageFormData.append("file", file);
                                 this.getUploadedFileURL(imageFormData, file)
@@ -923,7 +925,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                             />
                                                         </Flex.Item>
                                                     </Flex>
-                                                    <Text className={(this.state.errorImageUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorImageUrlMessage} />
+                                                    <Text className={(this.state.errorEmailUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorEmailUrlMessage} />
                                                     {this.state.emailTitleText && <Input className="inputField"
                                                         value={this.state.emailFileTitle}
                                                         label={this.localize("EmailTitle")}
@@ -1322,7 +1324,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         }
         else if (this.state.templateType === this.localize("EmailUpload")) {
-            return !(title && (this.state.errorButtonUrlMessage === "") && imageLink && this.state.emailFileTitle);
+            return !(title && (this.state.errorEmailUrlMessage === "") && imageLink && this.state.emailFileTitle);
         }
 
         else {

@@ -132,6 +132,7 @@ export interface formState {
     imageHeight?: any,
     imageWidth?: any,
     errorEmailUrlMessage?: string,
+    fileUploadText?:string
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -195,7 +196,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             questionTypeSelectedValueDisable: false,
             sistertenantId: "",
             emailBodyContent:"",
-            errorEmailUrlMessage:""
+            errorEmailUrlMessage:"",
+            fileUploadText:""
         }
         this.fileInput = React.createRef();
         this.handleImagePDFSelection = this.handleImagePDFSelection.bind(this);
@@ -316,7 +318,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
             }
             else if (this.state.templateType === this.localize("EmailUpload")) {
-                console.log("email", file)
+                this.setState({
+                    emailTitleText:false,
+                    fileUploadText:""
+                })
+              
                 if (file.size < 15728640) {
 
                     var emailFormData = new FormData()
@@ -385,7 +391,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 else{
                     this.setState({
                         imageLink: response.data,
-                        emailTitleText: true
+                        emailTitleText: true,
+                        fileUploadText:this.localize("UploadCompleteText")
                     })
                     let EmailLink = "[" + this.state.emailFileTitle + "](" + response.data + ")"
                     setCardFileNameEmailTemplate(this.card, EmailLink)
@@ -925,6 +932,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                             />
                                                         </Flex.Item>
                                                     </Flex>
+                                                    <Text className={(this.state.fileUploadText === "") ? "hide" : "show"} error size="small" content={this.state.fileUploadText} />
                                                     <Text className={(this.state.errorEmailUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorEmailUrlMessage} />
                                                     {this.state.emailTitleText && <Input className="inputField"
                                                         value={this.state.emailFileTitle}
@@ -1094,12 +1102,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                         )
                                                     },
                                                 },
-                                                (((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) && {
+                                                {
                                                     name: "sistertenant",
                                                     key: "sistertenant",
                                                     value: "sistertenant",
                                                     label: this.localize("SendToSisterTenant"),
-                                                }),
+                                                },
                                             ]}
                                         >
                                         </RadioGroup>
@@ -1515,7 +1523,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private editDraftMessage = async (draftMessage: IDraftMessage) => {
         try {
-            // console.log("edit draft messsage", draftMessage);
+            console.log("edit draft messsage", draftMessage);
             await updateDraftNotification(draftMessage);
         } catch (error) {
             return error;
@@ -1698,7 +1706,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         else if (this.state.templateType === this.localize("Q&AUpload")) {
             setCardTitleQuestionAnswer(this.card, this.state.title);
             setCardAuthorQuestionAnswer(this.card, event.target.value);
-            // setCardBtnsQuestionAnswer(this.card, this.state.values);
+           
         }
         else {
             setCardTitleEmailTemplate(this.card, this.state.title);
@@ -1730,7 +1738,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             setCardSummaryEmailTemplate(this.card, this.state.summary)
             setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
             if (this.state.imageLink !== "") {
-                // setCardFileNameTitleEmailTemplate(this.card, event.target.value);
+                
                 let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
                 setCardFileNameEmailTemplate(this.card, EmailLink)
             }
@@ -1826,9 +1834,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            // else if (this.state.templateType === this.localize("Q&AUpload")) {
-            //     setCardBtnsQuestionAnswer(this.card, values);
-            // }
+            
             this.setState({
                 card: this.card
             }, () => {
@@ -1884,9 +1890,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            // else if (this.state.templateType === this.localize("Q&AUpload")) {
-            //     setCardBtnsQuestionAnswer(this.card, values);
-            // }
             this.setState({
                 card: this.card
             }, () => {
@@ -2185,9 +2188,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
 
         const showDefaultCard = (!this.state.title && !this.state.author && questionAnswer.length == 0);
-        // setCardTitleQuestionAnswer(this.card, this.state.title);
-        // setCardAuthorQuestionAnswer(this.card, this.state.author);
-        // setCardBtnsQuestionAnswer(this.card, this.state.values);
         setCardPartQuestionAnswer(this.card, questionAnswer, this.localize, this.state.title, this.state.author); //update the adaptive card
         this.setState({
             card: this.card

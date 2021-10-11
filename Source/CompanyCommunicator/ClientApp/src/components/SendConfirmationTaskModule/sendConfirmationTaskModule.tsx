@@ -15,7 +15,7 @@ import { getDraftNotification, getConsentSummaries, sendDraftNotification } from
 import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
 import { getInitAdaptiveCardPDFUpload, setCardTitlePDFUpload, setCardImageLinkPDFUpload, setCardPdfNamePDFUpload, setCardSummaryPDFUpload, setCardAuthorPDFUpload, setCardBtnsPDFUpload } from '../AdaptiveCard/adaptiveCardPDFUpload';
 import { getInitAdaptiveCardQuestionAnswer, setCardTitleQuestionAnswer, setCardAuthorQuestionAnswer, setCardPartQuestionAnswer, setCardBtnNotificationIdQuestionAnswer, setCardBtnQuestionsQuestionAnswer, setCardBtnTitleQuestionAnswer, setCardBtnAuthorQuestionAnswer} from '../AdaptiveCard/adaptiveCardQuestionAnswer';
-import { getInitAdaptiveCardEmailTemplate, setCardTitleEmailTemplate, setCardAuthorEmailTemplate, setCardFileNameEmailTemplate,setCardSummaryEmailTemplate, setCardImageLinkEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
+import { getInitAdaptiveCardEmailTemplate, setCardEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
 
 import { ImageUtil } from '../../utility/imageutility';
 import { getBaseUrl } from '../../configVariables';
@@ -153,13 +153,10 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
 
                             }
                             else {
-                                setCardTitleEmailTemplate(this.card, this.state.message.title);
-                                setCardAuthorEmailTemplate(this.card, this.state.message.author);
-                                setCardSummaryEmailTemplate(this.card, this.state.message.summary); 
-                                setCardImageLinkEmailTemplate(this.card,this.state.message.emailBody)
-                                if (this.state.message.imageLink !== "") {
+                                 if (this.state.message.imageLink !== "") {
                                     let emailLink = "["+this.state.message.emailTitle+"](" + this.state.message.imageLink + ")"
-                                    setCardFileNameEmailTemplate(this.card, emailLink)
+                                    setCardEmailTemplate(this.card, this.state.message.emailBody, this.state.message.title, this.state.message.author, emailLink, this.state.message.summary)  
+                                   
                                 }
                             }
 
@@ -200,7 +197,7 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
     private getItem = async (id: number) => {
         try {
             const response = await getDraftNotification(id);
-            // console.log(" send get item", response.data)
+            console.log(" send get item", response.data)
             if (response.data.templateType === this.localize("Q&AUpload")) {
                 if (response.data.summary !== "") {
                     this.setState({

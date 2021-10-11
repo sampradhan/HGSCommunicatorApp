@@ -125,5 +125,6 @@
   "ChooseTemplate":"Choose a Template",
   "EmailTemplateImageUploadText": "Click the button to upload a image for email template",
   "UploadCompleteText":"The file is successfully uploaded.",
-  "Email":"Email"
+  "Email":"Email",
+  "ExportMessage":"Data exported succesfully. If you are not able see the file, please see you download folder."
 }

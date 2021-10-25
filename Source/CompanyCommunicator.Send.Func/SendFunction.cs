@@ -314,6 +314,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             string contents = string.Empty;
             try
             {
+                log.LogInformation($"Email file url  :{notification.ImageLink}");
                 if (!string.IsNullOrEmpty(notification.ImageLink))
                 {
                     
@@ -344,6 +345,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             {
                 // Bad message shouldn't be requeued.
                 log.LogError(e, $"SendMailToUserAsync thrown. Error message: {e.Message}");
+                //contents = $"SendMailToUserAsync thrown. Error message: {e.Message}";
             }
 
             return contents;

@@ -59,7 +59,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services
                 AppConfigTableName.UserAppIdRowKey);
 
             this.userAppId = appConfig?.Value;
-            return "30e987d7-8895-469d-a708-dd5945e559e3"; //this.userAppId;
+
+            // return "30e987d7-8895-469d-a708-dd5945e559e3"; //this.userAppId;
+            return this.userAppId;
         }
 
         /// <inheritdoc/>

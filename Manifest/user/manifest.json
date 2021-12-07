@@ -1,0 +1,72 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.5",
+  "version": "1.0.1",
+  "id": "426fdddb-9f43-4e14-af11-fe9313158845",
+  "packageName": "com.microsoft.teams.companycommunicator.enduser.dev",
+  "developer": {
+    "name": "Embee Software Pvt. Limited",
+    "websiteUrl": "https://dev.botframework.com",
+    "privacyUrl": "https://dev.botframework.com/privacy",
+    "termsOfUseUrl": "https://dev.botframework.com/termsofuse"
+    },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+   "short": "Company Communicator EndUser",
+    "full": "Company Communicator EndUser"
+  },
+  "description": {
+    "short": "Company Communicator",
+    "full": "Company Communicator"
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "b0e7ef10-ddeb-4389-95a1-badf90233fff",
+      "needsChannelSelector": false,
+      "isNotificationOnly": true,
+      "scopes": [
+        "team",
+        "personal",
+        "groupchat"
+      ]
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "b0e7ef10-ddeb-4389-95a1-badf90233fff",
+      "canUpdateConfiguration": true,
+      "commands": [
+        {
+          "id": "badge",
+          "type": "action",
+          "title": "company communicator EndUser",
+          "description": "company communicator",
+          "initialRun": true,
+          "fetchTask": true,
+          "context": [
+            "compose",
+            "message"
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "*.ngrok.io",
+    "*.azurewebsites.net",
+    "code.jquery.com",
+    "cdnjs.cloudflare.com",
+    "maxst.icons8.com",
+    "maxcdn.bootstrapcdn.com",
+    "*.botframework.com"
+  ]
+}
+    

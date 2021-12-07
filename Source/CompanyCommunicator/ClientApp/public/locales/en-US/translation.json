@@ -123,5 +123,8 @@
   "MCQLimit":"You can add maximum 2 MCQs",
   "ErrorImageTooBig": "The image is too big! Image dimension must be up to 1024 X 1024 and maximum image size is 1 MB",
   "ChooseTemplate":"Choose a Template",
-  "EmailTemplateImageUploadText": "Click the button to upload a image for email template"
+  "EmailTemplateImageUploadText": "Click the button to upload a image for email template",
+  "UploadCompleteText":"The file is successfully uploaded.",
+  "Email":"Email",
+  "ExportMessage":"Data exported succesfully. If you are not able see the file, please see you download folder."
 }

@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
-  "version": "1.1.0",
-  "id": "5b79b06e-e012-479b-9fc2-2d673d0c871a",
-  "packageName": "co.in.embee.embeecommunicator-uat",
+  "version": "4.1.0",
+  "id": "1d022d11-dcca-4183-b210-fa5a86f0ab94",
+  "packageName": "com.microsoft.teams.companycommunicator.authors.dev",
   "developer": {
-    "name": "ESPL SPD",
+    "name": "Embee Software Pvt. Limited",
     "websiteUrl": "https://dev.botframework.com",
     "privacyUrl": "https://dev.botframework.com/privacy",
     "termsOfUseUrl": "https://dev.botframework.com/termsofuse"
@@ -15,24 +15,21 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "Embee Communicator",
-    "full": "Embee Communicator"
+    "short": "Company Communicator (Authors)",
+    "full": "Company Communicator (Authors)"
   },
   "description": {
     "short": "Broadcast messages to multiple teams and people in one go",
     "full": "Broadcasts messages to multiple teams and individuals through channel posts and chat messages"
   },
   "accentColor": "#64A2CC",
-  "bots": [
+  "configurableTabs": [
     {
-      "botId": "b49f6338-fac9-4d82-b28a-0d143822bb93",
+      "configurationUrl": "https://9130-202-142-101-6.ngrok.io/configtab",
+      "canUpdateConfiguration": true,
       "scopes": [
-        "personal",
-        "team",
-        "groupchat"
-      ],
-      "supportsFiles": false,
-      "isNotificationOnly": true
+        "team"
+      ]
     }
   ],
   "permissions": [
@@ -40,7 +37,14 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "*.ngrok.io",
-    "*.azurewebsites.net"
-  ]
+     "*.ngrok.io",
+    "code.jquery.com",
+    "cdnjs.cloudflare.com",
+    "maxst.icons8.com",
+    "maxcdn.bootstrapcdn.com"
+  ],
+  "webApplicationInfo": {
+    "id": "b0e7ef10-ddeb-4389-95a1-badf90233fff",
+    "resource": "api://9130-202-142-101-6.ngrok.io"
+  }
 }

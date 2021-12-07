@@ -241,7 +241,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 SendTypeId = notificationEntity.SendTypeId,
                 AdaptiveCardContent = notificationEntity.AdaptiveCardContent,
                 EmailBody=notificationEntity.EmailBody,
-                EmailTitle = notificationEntity.Title,
+                EmailTitle = notificationEntity.EmailTitle,
             };
 
             return this.Ok(result);

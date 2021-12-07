@@ -280,7 +280,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                 var notification = await this.notificationRepo.GetAsync(
                NotificationDataTableNames.SendingNotificationsPartition,
                messageContent.NotificationId);
-                if (notification.TemplateType.ToUpper() == "UPLOAD EMAIL TEMPLATE" && (notification.SendTypeId == "2" || notification.SendTypeId == "3"))
+                if (notification.TemplateType.ToUpper() == "UPLOAD EMAIL TEMPLATE" && (notification.SendTypeId == "2" || notification.SendTypeId == "3" || notification.SendTypeId == "4"))
                 {
 
                     var user = await this.usersService.GetUserAsync(messageContent.RecipientData.UserData.AadId);

@@ -16,7 +16,7 @@ import * as AdaptiveCards from "adaptivecards";
 import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
 import { getInitAdaptiveCardPDFUpload, setCardTitlePDFUpload, setCardImageLinkPDFUpload, setCardPdfNamePDFUpload, setCardSummaryPDFUpload, setCardAuthorPDFUpload, setCardBtnsPDFUpload } from '../AdaptiveCard/adaptiveCardPDFUpload';
 import { getInitAdaptiveCardQuestionAnswer, setCardTitleQuestionAnswer, setCardAuthorQuestionAnswer, setCardPartQuestionAnswer } from '../AdaptiveCard/adaptiveCardQuestionAnswer';
-import { getInitAdaptiveCardEmailTemplate, setCardTitleEmailTemplate, setCardAuthorEmailTemplate, setCardFileNameEmailTemplate, setCardSummaryEmailTemplate, setCardImageLinkEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
+import { getInitAdaptiveCardEmailTemplate, setCardEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
 
 import { getDraftNotification, getTeams, createDraftNotification, updateDraftNotification, searchGroups, getGroups, verifyGroupAccess, sendPdfFile, getSisterTenant } from '../../apis/messageListApi';
 
@@ -131,6 +131,8 @@ export interface formState {
     sistertenantId?: any,
     imageHeight?: any,
     imageWidth?: any,
+    errorEmailUrlMessage?: string,
+    fileUploadText?: string
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -193,7 +195,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             emailFileTitle: "",
             questionTypeSelectedValueDisable: false,
             sistertenantId: "",
-            emailBodyContent:""
+            emailBodyContent: "",
+            errorEmailUrlMessage: "",
+            fileUploadText: ""
         }
         this.fileInput = React.createRef();
         this.handleImagePDFSelection = this.handleImagePDFSelection.bind(this);
@@ -244,39 +248,39 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             }
 
             else {
-        if (this.props.location.state) {
-            this.setState({
-                templateType: this.props.location.state.data,
-                questionTypeSelectedValue: this.state.questionTypeDropDownInput[0],
-                backButtonShow: true,
-                exists: false,
-                loader: false,
-            }, () => {
-                this.card = (this.state.templateType === this.localize("ImageUpload")) ? getInitAdaptiveCard(this.localize) : (this.state.templateType === this.localize("PDFUpload")) ? getInitAdaptiveCardPDFUpload(this.localize) : (this.state.templateType === this.localize("Q&AUpload")) ? getInitAdaptiveCardQuestionAnswer(this.localize) : getInitAdaptiveCardEmailTemplate(this.localize);
-                this.setState({
-                    card: this.card,
-                    exists: false,
-                    loader: false,
-                    selectedRadioBtn: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? "teams" : "rosters",
-                    teamsOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? true : false,
-                    rostersOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? false : true,
-                    allUsersOptionSelected: false,
-                    sisterTenantOptionSelected: false,
-                    groupsOptionSelected: false
-                }, () => {
-                    this.setDefaultCard(this.card);
-                    let adaptiveCard = new AdaptiveCards.AdaptiveCard();
-                    adaptiveCard.parse(this.state.card);
-                    let renderedCard = adaptiveCard.render();
-                    document.getElementsByClassName('adaptiveCardContainer')[0].appendChild(renderedCard);
-                    if (this.state.btnLink) {
-                        let link = this.state.btnLink;
-                        adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); };
-                    }
-                })
+                if (this.props.location.state) {
+                    this.setState({
+                        templateType: this.props.location.state.data,
+                        questionTypeSelectedValue: this.state.questionTypeDropDownInput[0],
+                        backButtonShow: true,
+                        exists: false,
+                        loader: false,
+                    }, () => {
+                        this.card = (this.state.templateType === this.localize("ImageUpload")) ? getInitAdaptiveCard(this.localize) : (this.state.templateType === this.localize("PDFUpload")) ? getInitAdaptiveCardPDFUpload(this.localize) : (this.state.templateType === this.localize("Q&AUpload")) ? getInitAdaptiveCardQuestionAnswer(this.localize) : getInitAdaptiveCardEmailTemplate(this.localize);
+                        this.setState({
+                            card: this.card,
+                            exists: false,
+                            loader: false,
+                            selectedRadioBtn: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? "teams" : "rosters",
+                            teamsOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? true : false,
+                            rostersOptionSelected: ((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) ? false : true,
+                            allUsersOptionSelected: false,
+                            sisterTenantOptionSelected: false,
+                            groupsOptionSelected: false
+                        }, () => {
+                            this.setDefaultCard(this.card);
+                            let adaptiveCard = new AdaptiveCards.AdaptiveCard();
+                            adaptiveCard.parse(this.state.card);
+                            let renderedCard = adaptiveCard.render();
+                            document.getElementsByClassName('adaptiveCardContainer')[0].appendChild(renderedCard);
+                            if (this.state.btnLink) {
+                                let link = this.state.btnLink;
+                                adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); };
+                            }
+                        })
 
-            })
-        }
+                    })
+                }
             }
         });
 
@@ -314,6 +318,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
             }
             else if (this.state.templateType === this.localize("EmailUpload")) {
+                this.setState({
+                    emailTitleText: false,
+                    fileUploadText: ""
+                })
                 console.log("email", file)
                 if (file.size < 15728640) {
 
@@ -324,7 +332,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 }
                 else {
                     this.setState({
-                        errorImageUrlMessage: this.localize("ErrorEmailTemplateTooBig")
+                        errorEmailUrlMessage: this.localize("ErrorEmailTemplateTooBig")
                     });
                 }
 
@@ -333,33 +341,33 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     }
 
-    private imageCheck = async (file:any) =>{
+    private imageCheck = async (file: any) => {
         var reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    if (reader.result) {
-                        const image = new Image();
-                        image.src = reader.result.toString()
-                        image.onload = () => {
-                            if (image.height < 1024 && image.width < 1024 && file.size < 1048576) {
-                                var imageFormData = new FormData()
-                                imageFormData.append("file", file);
-                                this.getUploadedFileURL(imageFormData, file)
-                            }
-                            else {
-                                this.setState({
-                                    errorImageUrlMessage: this.localize("ErrorImageTooBig")
-                                });
-                            }
-                        };
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            if (reader.result) {
+                const image = new Image();
+                image.src = reader.result.toString()
+                image.onload = () => {
+                    if (image.height <= 1024 && image.width <= 1024 && file.size < 1048576) {
+                        var imageFormData = new FormData()
+                        imageFormData.append("file", file);
+                        this.getUploadedFileURL(imageFormData, file)
+                    }
+                    else {
+                        this.setState({
+                            errorImageUrlMessage: this.localize("ErrorImageTooBig")
+                        });
                     }
                 };
-                reader.onerror = function (error) {
-                    console.log('Error: ', error);
-                };
+            }
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
     }
 
-    private getUploadedFileURL = async (formdata:any, file: any) => {
+    private getUploadedFileURL = async (formdata: any, file: any) => {
         const response = await sendPdfFile(formdata);
         if (response.data) {
             // console.log("link res", response.data);
@@ -373,23 +381,25 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 this.updateCard();
             }
             else if (this.state.templateType === this.localize("EmailUpload")) {
-                if(file.type.includes('image')){
+                if (file.type.includes('image')) {
                     this.setState({
                         emailBodyContent: response.data
                     })
-                    setCardImageLinkEmailTemplate(this.card, response.data)
+                    let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
+                    setCardEmailTemplate(this.card, response.data, this.state.title, this.state.author, EmailLink, this.state.summary)
                     this.updateCard();
                 }
-                else{
+                else {
                     this.setState({
                         imageLink: response.data,
-                        emailTitleText: true
+                        emailTitleText: true,
+                        fileUploadText: this.localize("UploadCompleteText")
                     })
                     let EmailLink = "[" + this.state.emailFileTitle + "](" + response.data + ")"
-                    setCardFileNameEmailTemplate(this.card, EmailLink)
+                    setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, this.state.author, EmailLink, this.state.summary)
                     this.updateCard();
                 }
-                
+
             }
             else if (this.state.templateType === this.localize("ImageUpload")) {
                 this.setState({
@@ -467,6 +477,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const summaryAsString = this.localize("Summary");
         const authorAsString = this.localize("Author1");
         const buttonTitleAsString = this.localize("ButtonTitle");
+        const email = this.localize("Email");
         const imgUrl = getBaseUrl() + "/image/imagePlaceholder.png";
         if (this.state.templateType === this.localize("ImageUpload")) {
 
@@ -499,10 +510,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
 
         else {
-            setCardTitleEmailTemplate(card, titleAsString);
-            setCardImageLinkEmailTemplate(card, imgUrl)
-            setCardAuthorEmailTemplate(card, authorAsString);
-            setCardSummaryEmailTemplate(card, summaryAsString)
+            setCardEmailTemplate(card, imgUrl, titleAsString, authorAsString, email, summaryAsString)
         }
 
     }
@@ -631,16 +639,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     }
                 }
                 else {
-                    setCardTitleEmailTemplate(this.card, draftMessageDetail.title);
-                    setCardAuthorEmailTemplate(this.card, draftMessageDetail.author);
-                    setCardSummaryEmailTemplate(this.card, draftMessageDetail.summary);
-                    setCardImageLinkEmailTemplate(this.card, draftMessageDetail.emailBody)
-                    if (draftMessageDetail.imageLink !== "") {
+                   if (draftMessageDetail.imageLink !== "") {
                         this.setState({
                             emailTitleText: true
                         })
-                        let EmailLink = "[" + draftMessageDetail.emailTitle + "](" + draftMessageDetail.imageLink + ")"
-                        setCardFileNameEmailTemplate(this.card, EmailLink)
+                        const EmailLink = "[" + draftMessageDetail.emailTitle + "](" + draftMessageDetail.imageLink + ")"
+                        setCardEmailTemplate(this.card, draftMessageDetail.emailBody, draftMessageDetail.title, draftMessageDetail.author, EmailLink, draftMessageDetail.summary)
                     }
                 }
 
@@ -774,7 +778,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <div className="textArea">
                                                 <Text content={this.localize("Summary")} />
                                                 <TextArea
-                                                    autoFocus
                                                     placeholder={this.localize("Summary")}
                                                     value={this.state.summary}
                                                     onChange={this.onSummaryChanged}
@@ -923,7 +926,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                             />
                                                         </Flex.Item>
                                                     </Flex>
-                                                    <Text className={(this.state.errorImageUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorImageUrlMessage} />
+                                                    <Text className={(this.state.fileUploadText === "") ? "hide" : "show"} error size="small" content={this.state.fileUploadText} />
+                                                    <Text className={(this.state.errorEmailUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorEmailUrlMessage} />
                                                     {this.state.emailTitleText && <Input className="inputField"
                                                         value={this.state.emailFileTitle}
                                                         label={this.localize("EmailTitle")}
@@ -935,7 +939,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                     <div className="textArea">
                                                         <Text content={this.localize("Summary")} />
                                                         <TextArea
-                                                            autoFocus
                                                             placeholder={this.localize("Summary")}
                                                             value={this.state.summary}
                                                             onChange={this.onSummaryChanged}
@@ -1092,12 +1095,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                         )
                                                     },
                                                 },
-                                                (((this.state.templateType === this.localize("ImageUpload")) || (this.state.templateType === this.localize("PDFUpload"))) && {
+                                                {
                                                     name: "sistertenant",
                                                     key: "sistertenant",
                                                     value: "sistertenant",
                                                     label: this.localize("SendToSisterTenant"),
-                                                }),
+                                                },
                                             ]}
                                         >
                                         </RadioGroup>
@@ -1322,7 +1325,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         }
         else if (this.state.templateType === this.localize("EmailUpload")) {
-            return !(title && (this.state.errorButtonUrlMessage === "") && imageLink && this.state.emailFileTitle);
+            return !(title && (this.state.errorEmailUrlMessage === "") && imageLink && this.state.emailFileTitle);
         }
 
         else {
@@ -1513,7 +1516,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private editDraftMessage = async (draftMessage: IDraftMessage) => {
         try {
-            // console.log("edit draft messsage", draftMessage);
+            console.log("edit draft messsage", draftMessage);
             await updateDraftNotification(draftMessage);
         } catch (error) {
             return error;
@@ -1577,14 +1580,16 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             setCardAuthorQuestionAnswer(this.card, this.state.author);
         }
         else {
-            setCardTitleEmailTemplate(this.card, event.target.value);
-            setCardAuthorEmailTemplate(this.card, this.state.author);
-            setCardSummaryEmailTemplate(this.card, this.state.summary)
-            setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
-            if (this.state.imageLink !== "") {
-                let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
-                setCardFileNameEmailTemplate(this.card, EmailLink)
-            }
+            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            setCardEmailTemplate(this.card, this.state.emailBodyContent, event.target.value, this.state.author, EmailLink, this.state.summary);
+            // setCardTitleEmailTemplate(this.card, event.target.value);
+            // setCardAuthorEmailTemplate(this.card, this.state.author);
+            // setCardSummaryEmailTemplate(this.card, this.state.summary)
+            // setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
+            // if (this.state.imageLink !== "") {
+            //     let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
+            //     setCardFileNameEmailTemplate(this.card, EmailLink)
+            // }
 
         }
 
@@ -1652,14 +1657,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             setCardBtnsPDFUpload(this.card, this.state.values);
         }
         else if (this.state.templateType === this.localize("EmailUpload")) {
-            setCardTitleEmailTemplate(this.card, this.state.title);
-            setCardAuthorEmailTemplate(this.card, this.state.author);
-            setCardSummaryEmailTemplate(this.card, event.target.value)
-            setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
-            if (this.state.imageLink !== "") {
-                let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
-                setCardFileNameEmailTemplate(this.card, EmailLink)
-            }
+            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, this.state.author, EmailLink, event.target.value)
+            
         }
         this.setState({
             summary: event.target.value,
@@ -1699,14 +1699,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             // setCardBtnsQuestionAnswer(this.card, this.state.values);
         }
         else {
-            setCardTitleEmailTemplate(this.card, this.state.title);
-            setCardAuthorEmailTemplate(this.card, event.target.value);
-            setCardSummaryEmailTemplate(this.card, this.state.summary);
-            setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
-            if (this.state.imageLink !== "") {
-                let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
-                setCardFileNameEmailTemplate(this.card, EmailLink)
-            }
+            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, event.target.value, EmailLink, this.state.summary)
+            
         }
         this.setState({
             author: event.target.value,
@@ -1723,15 +1718,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.setState({
             emailFileTitle: event.target.value
         }, () => {
-            setCardTitleEmailTemplate(this.card, this.state.title);
-            setCardAuthorEmailTemplate(this.card, this.state.author);
-            setCardSummaryEmailTemplate(this.card, this.state.summary)
-            setCardImageLinkEmailTemplate(this.card, this.state.emailBodyContent)
-            if (this.state.imageLink !== "") {
-                // setCardFileNameTitleEmailTemplate(this.card, event.target.value);
-                let EmailLink = "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")"
-                setCardFileNameEmailTemplate(this.card, EmailLink)
-            }
+            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, this.state.author, EmailLink, this.state.summary)
+            
             this.updateCard();
         });
     }
@@ -1824,9 +1813,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            // else if (this.state.templateType === this.localize("Q&AUpload")) {
-            //     setCardBtnsQuestionAnswer(this.card, values);
-            // }
+           
             this.setState({
                 card: this.card
             }, () => {
@@ -1882,9 +1869,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            // else if (this.state.templateType === this.localize("Q&AUpload")) {
-            //     setCardBtnsQuestionAnswer(this.card, values);
-            // }
+            
             this.setState({
                 card: this.card
             }, () => {
@@ -2183,9 +2168,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
 
         const showDefaultCard = (!this.state.title && !this.state.author && questionAnswer.length == 0);
-        // setCardTitleQuestionAnswer(this.card, this.state.title);
-        // setCardAuthorQuestionAnswer(this.card, this.state.author);
-        // setCardBtnsQuestionAnswer(this.card, this.state.values);
         setCardPartQuestionAnswer(this.card, questionAnswer, this.localize, this.state.title, this.state.author); //update the adaptive card
         this.setState({
             card: this.card

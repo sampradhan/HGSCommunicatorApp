@@ -7,14 +7,14 @@ import { getSentNotification, exportNotification, surveyexport, reactionexport }
 import { RouteComponentProps } from 'react-router-dom';
 import * as AdaptiveCards from "adaptivecards";
 import { TooltipHost } from 'office-ui-fabric-react';
-import { Loader, List, Image, Button, DownloadIcon, AcceptIcon, Flex } from '@fluentui/react-northstar';
+import { Loader, List, Image, Button, DownloadIcon, AcceptIcon, Flex, Dialog } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { CSVLink } from "react-csv";
 
 import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
 import { getInitAdaptiveCardPDFUpload, setCardTitlePDFUpload, setCardImageLinkPDFUpload, setCardPdfNamePDFUpload, setCardSummaryPDFUpload, setCardAuthorPDFUpload, setCardBtnsPDFUpload } from '../AdaptiveCard/adaptiveCardPDFUpload';
 import { getInitAdaptiveCardQuestionAnswer, setCardTitleQuestionAnswer, setCardAuthorQuestionAnswer, setCardPartQuestionAnswer } from '../AdaptiveCard/adaptiveCardQuestionAnswer';
-import { getInitAdaptiveCardEmailTemplate, setCardTitleEmailTemplate, setCardAuthorEmailTemplate, setCardFileNameEmailTemplate, setCardSummaryEmailTemplate, setCardImageLinkEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
+import { getInitAdaptiveCardEmailTemplate, setCardEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
 
 import './statusTaskModule.scss';
 
@@ -59,7 +59,7 @@ export interface IMessage {
     buttons: string;
     isImportant?: boolean;
     emailTitle?: string;
-    emailBody?:any;
+    emailBody?: any;
 }
 
 export interface IStatusState {
@@ -71,7 +71,7 @@ export interface IStatusState {
     questionAnswer: any[];
     id?: any;
     downloadData?: any;
-    adaptiveCardContent?:any
+    adaptiveCardContent?: any
 }
 
 interface StatusTaskModuleProps extends RouteComponentProps, WithTranslation { }
@@ -145,14 +145,9 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                         setCardPartQuestionAnswer(this.card, this.state.questionAnswer, this.localize, this.state.message.title, this.state.message.author); //update the adaptive cards
                     }
                     else {
-                        setCardTitleEmailTemplate(this.card, this.state.message.title);
-                        setCardAuthorEmailTemplate(this.card, this.state.message.author);
-                        setCardSummaryEmailTemplate(this.card, this.state.message.summary)
-                        setCardImageLinkEmailTemplate(this.card,this.state.message.emailBody)
                         if (this.state.message.imageLink !== "") {
                             let emailLink = "[" + this.state.message.emailTitle + "](" + this.state.message.imageLink + ")"
-                            setCardFileNameEmailTemplate(this.card, emailLink)
-
+                            setCardEmailTemplate(this.card, this.state.message.emailBody, this.state.message.title, this.state.message.author, emailLink, this.state.message.summary)
                         }
                     }
 
@@ -191,7 +186,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             response.data.sentDate = formatDate(response.data.sentDate);
             response.data.succeeded = formatNumber(response.data.succeeded);
             response.data.failed = formatNumber(response.data.failed);
-            // console.log("view status", response.data)
+            console.log("view status", response.data)
             response.data.unknown = response.data.unknown && formatNumber(response.data.unknown);
             if (response.data.templateType === this.localize("Q&AUpload")) {
                 if (response.data.summary !== "") {
@@ -200,23 +195,23 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                     });
                 }
                 this.setState({
-                    adaptiveCardContent:JSON.parse(response.data.adaptiveCardContent),
+                    adaptiveCardContent: JSON.parse(response.data.adaptiveCardContent),
                     templateType: response.data.templateType,
-                },()=>{
+                }, () => {
                     this.setState({
                         id: this.state.adaptiveCardContent.actions[0].data.NotificationId
-                    },()=>{
-                        this.exportData(this.state.id) 
+                    }, () => {
+                        this.exportData(this.state.id)
                     })
 
                 })
             }
-            else{
+            else {
                 this.setState({
                     id: response.data.id,
                     templateType: response.data.templateType
                 }, () => {
-                    this.exportData(this.state.id)     
+                    this.exportData(this.state.id)
                 })
             }
             this.setState({
@@ -230,10 +225,10 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
     private exportData = async (id: any) => {
         if (this.state.templateType === this.localize("Q&AUpload")) {
             const response = await surveyexport(id);
-             console.log("servey export result", response)
-            if(response.data){
+            console.log("servey export result", response)
+            if (response.data) {
                 this.setState({
-                    downloadData:response.data
+                    downloadData: response.data
                 })
             }
         }
@@ -241,10 +236,10 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
 
             const response = await reactionexport(id);
             // console.log("reaction export result", response)
-            if(response.status === 200){
+            if (response.status === 200) {
                 const downloadDataList = Object.entries(response.data)
                 this.setState({
-                    downloadData:downloadDataList
+                    downloadData: downloadDataList
                 })
             }
         }
@@ -322,9 +317,15 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                         <Flex.Item>
                                             <TooltipHost content={!this.state.message.sendingCompleted ? "" : (this.state.message.canDownload ? "" : this.localize("ExportButtonProgressText"))} calloutProps={{ gapSpace: 0 }}>
                                                 {/* <Button icon={<DownloadIcon size="medium" />} disabled={this.state.message.canDownload || !this.state.message.sendingCompleted} content={this.localize("ExportButtonText")} id="exportBtn" onClick={this.onExport} primary /> */}
-                                                <Button primary className="exportBtn" icon={<DownloadIcon size="medium" />} disabled={(this.state.downloadData && this.state.downloadData.length > 0) ? false : true} content={this.localize("ExportButtonText")}>
-                                                    {this.state.downloadData && <CSVLink data={this.state.downloadData} filename={this.state.message.title+ new Date().toDateString() + ".csv"}><DownloadIcon size="medium" styles={{marginRight:"5px"}}/>{this.localize("ExportButtonText")}</CSVLink>}
-                                                </Button>
+                                                <Dialog
+                                                    closeOnOutsideClick={false}
+                                                    confirmButton="ok"
+                                                    content={this.localize("ExportMessage")}
+                                                    trigger={<Button primary className="exportBtn" icon={<DownloadIcon size="medium" />} disabled={(this.state.downloadData && this.state.downloadData.length > 0) ? false : true} content={this.localize("ExportButtonText")}>
+                                                    {this.state.downloadData && <CSVLink data={this.state.downloadData} filename={this.state.message.title + new Date().toDateString() + ".csv"}><DownloadIcon size="medium" styles={{ marginRight: "5px" }} />{this.localize("ExportButtonText")}</CSVLink>}
+                                                </Button>}
+                                                />
+                                                
                                             </TooltipHost>
                                         </Flex.Item>
                                     </Flex>

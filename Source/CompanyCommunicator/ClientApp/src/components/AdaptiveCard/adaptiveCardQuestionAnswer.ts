@@ -138,7 +138,6 @@ export const setCardPartQuestionAnswer = (card: any, questionSet: any[], localiz
                             "type": "TextBlock",
                             "text": "${item.question}",
                             "wrap": true,
-                            "size": "Medium",
                             "id":  "question${index}"
                         }`);
                 jsonArrayQuestions.push(`{

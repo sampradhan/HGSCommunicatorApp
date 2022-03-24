@@ -282,11 +282,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                messageContent.NotificationId);
                 if (notification.TemplateType.ToUpper() == "UPLOAD EMAIL TEMPLATE" && (notification.SendTypeId == "2" || notification.SendTypeId == "3" || notification.SendTypeId == "4"))
                 {
-
                     var user = await this.usersService.GetUserAsync(messageContent.RecipientData.UserData.AadId);
                     log.LogInformation($"Mail Sending User Name :{user.DisplayName} -> UPN : {user.UserPrincipalName} -> User Email : {user.Mail}");
 
-                    var htmlContent=await this.GetEmailContentFromHtml(notification, log);
+                    var htmlContent = await this.GetEmailContentFromHtml(notification, log);
                     if (!string.IsNullOrEmpty(htmlContent))
                     {
                         // var sentResult = await this.usersService.SendMailToUserAsync(user.UserPrincipalName, "Company Communicator V3 Notification", user.Mail, notification.Content, true);
@@ -317,7 +316,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                 log.LogInformation($"Email file url  :{notification.ImageLink}");
                 if (!string.IsNullOrEmpty(notification.ImageLink))
                 {
-                    
                     var imageLinkArray=notification.ImageLink.Split("/");
                     var fileName= imageLinkArray[imageLinkArray.Length - 1];
                     if (!string.IsNullOrEmpty(fileName))
@@ -345,7 +343,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             {
                 // Bad message shouldn't be requeued.
                 log.LogError(e, $"SendMailToUserAsync thrown. Error message: {e.Message}");
-                //contents = $"SendMailToUserAsync thrown. Error message: {e.Message}";
+
+                // contents = $"SendMailToUserAsync thrown. Error message: {e.Message}";
             }
 
             return contents;

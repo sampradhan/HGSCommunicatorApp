@@ -47,6 +47,22 @@ export const getInitAdaptiveCardPDFUpload = (t: TFunction) => {
                         "wrap": true
                     },
                     {
+                        "type": "Image",
+                        "spacing": "Default",
+                        "url": "",
+                        "msTeams": {
+                            "allowExpand": true
+                        },
+                        "selectAction": {
+                            "type": "Action.OpenUrl",
+                            "title": "Image",
+                            "url": ""
+                          },
+                        "size": "Stretch",
+                        "width": "300px",
+                        "altText": ""
+                    },
+                    {
                         "type": "TextBlock",
                         "text": "",
                         "wrap": true
@@ -95,19 +111,19 @@ export const setCardPdfNamePDFUpload = (card: any, link?: string) => {
 
 
 export const getCardSummaryPDFUpload = (card: any) => {
-    return card.body[3].text;
-}
-
-export const setCardSummaryPDFUpload = (card: any, summary?: string) => {
-    card.body[3].text = summary;
-}
-
-export const getCardAuthorPDFUpload = (card: any) => {
     return card.body[4].text;
 }
 
+export const setCardSummaryPDFUpload = (card: any, summary?: string) => {
+    card.body[4].text = summary;
+}
+
+export const getCardAuthorPDFUpload = (card: any) => {
+    return card.body[5].text;
+}
+
 export const setCardAuthorPDFUpload = (card: any, author?: string) => {
-    card.body[4].text = author;
+    card.body[5].text = author;
 }
 
 export const getCardBtnTitlePDFUpload = (card: any) => {
@@ -116,6 +132,19 @@ export const getCardBtnTitlePDFUpload = (card: any) => {
 
 export const getCardBtnLinkPDFUpload = (card: any) => {
     return card.actions[0].url;
+}
+
+export const getCardImageselectActionLinkPDF = (card: any) => {
+    return card.body[3].selectAction.url;
+}
+
+export const setCardImageLinkPDF = (card: any, imageLink?: string) => {
+    card.body[3].url = imageLink;
+    card.body[3].selectAction.url = imageLink;
+}
+
+export const getCardImageLinkPDF = (card: any) => {
+    return card.body[3].url;
 }
 
 // set the values collection with buttons to the card actions

@@ -1,22 +1,23 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.5",
-  "version": "1.0.2",
-  "id": "908fe6bb-224b-4205-8e07-258203d99eb8",
-  "packageName": "co.in.embee.embeecommunicator.authors",
+  "manifestVersion": "1.10",
+  "version": "1.0.0",
+  "id": "ff8cee77-4e68-4244-945b-631e2b5dffb5",
+  "packageName": "co.in.embee.infoedgecommunicator.authors",
   "developer": {
-    "name": "ESPL SPD",
+    "name": "Embee Software Pvt Ltd",
     "websiteUrl": "https://dev.botframework.com",
     "privacyUrl": "https://dev.botframework.com/privacy",
-    "termsOfUseUrl": "https://dev.botframework.com/termsofuse"
+    "termsOfUseUrl": "https://dev.botframework.com/termsofuse",
+    "mpnId": "1178358"
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
   "name": {
-    "short": "Embee Communicator-Author",
-    "full": "Embee Communicator-Author"
+    "short": "Infoedge Communicator-Author",
+    "full": "Infoedge Communicator-Author"
   },
   "description": {
     "short": "Broadcast messages to multiple teams and people in one go",
@@ -25,7 +26,7 @@
   "accentColor": "#64A2CC",
   "configurableTabs": [
     {
-      "configurationUrl": "https://hgs-communicator-app.azurewebsites.net/configtab",
+      "configurationUrl": "https://infoedge-communicator.azurewebsites.net/configtab",
       "canUpdateConfiguration": true,
       "scopes": [
         "team"
@@ -41,7 +42,7 @@
     "*.azurewebsites.net"
   ],
   "webApplicationInfo": {
-    "id": "b5036dfe-6717-4336-86ba-01dd01ce34b2",
-    "resource": "api://hgs-communicator-app.azurewebsites.net"
+    "id": "ce68e6d9-098d-4fc0-b646-d129254c8256",
+    "resource": "api://infoedge-communicator.azurewebsites.net"
   }
 }

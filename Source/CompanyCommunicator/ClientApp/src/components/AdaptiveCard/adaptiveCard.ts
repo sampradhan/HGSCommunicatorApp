@@ -49,6 +49,20 @@ export const getInitAdaptiveCard = (t: TFunction) => {
                     "altText": ""
                 },
                 {
+                    "type": "Image",
+                    "spacing": "Default",
+                    "url": "",
+                    "width": "80px",
+                    "height": "80px",
+                    "altText": "",
+                    "horizontalAlignment": "left"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "",
+                    "wrap": true
+                },
+                {
                     "type": "TextBlock",
                     "text": "",
                     "wrap": true
@@ -91,20 +105,37 @@ export const setCardImageLink = (card: any, imageLink?: string) => {
     card.body[1].selectAction.url = imageLink;
 }
 
-export const getCardSummary = (card: any) => {
-    return card.body[2].text;
+export const getCardPDFImage = (card: any) => {
+    return card.body[2].url;
 }
 
-export const setCardSummary = (card: any, summary?: string) => {
-    card.body[2].text = summary;
+export const setCardPDFImage = (card: any, imageLink?: string) => {
+    card.body[2].url = imageLink;
 }
 
-export const getCardAuthor = (card: any) => {
+export const getCardPdfName = (card: any) => {
     return card.body[3].text;
 }
 
+export const setCardPdfName = (card: any, link?: string) => {
+    card.body[3].text = link;
+}
+
+
+export const getCardSummary = (card: any) => {
+    return card.body[4].text;
+}
+
+export const setCardSummary = (card: any, summary?: string) => {
+    card.body[4].text = summary;
+}
+
+export const getCardAuthor = (card: any) => {
+    return card.body[5].text;
+}
+
 export const setCardAuthor = (card: any, author?: string) => {
-    card.body[3].text = author;
+    card.body[5].text = author;
 }
 
 export const getCardBtnTitle = (card: any) => {

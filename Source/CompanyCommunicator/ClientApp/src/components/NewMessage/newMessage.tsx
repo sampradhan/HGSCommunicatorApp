@@ -13,8 +13,8 @@ import * as microsoftTeams from "@microsoft/teams-js";
 
 import * as AdaptiveCards from "adaptivecards";
 
-import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
-import { getInitAdaptiveCardPDFUpload, setCardTitlePDFUpload, setCardImageLinkPDFUpload, setCardPdfNamePDFUpload, setCardSummaryPDFUpload, setCardAuthorPDFUpload, setCardBtnsPDFUpload } from '../AdaptiveCard/adaptiveCardPDFUpload';
+import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns, setCardPDFImage, setCardPdfName } from '../AdaptiveCard/adaptiveCard';
+import { getInitAdaptiveCardPDFUpload, setCardTitlePDFUpload, setCardImageLinkPDFUpload, setCardPdfNamePDFUpload, setCardSummaryPDFUpload, setCardAuthorPDFUpload, setCardBtnsPDFUpload, setCardImageLinkPDF } from '../AdaptiveCard/adaptiveCardPDFUpload';
 import { getInitAdaptiveCardQuestionAnswer, setCardTitleQuestionAnswer, setCardAuthorQuestionAnswer, setCardPartQuestionAnswer } from '../AdaptiveCard/adaptiveCardQuestionAnswer';
 import { getInitAdaptiveCardEmailTemplate, setCardEmailTemplate } from '../AdaptiveCard/adaptiveCardEmailTemplate';
 
@@ -72,7 +72,8 @@ export interface IDraftMessage {
     TenantId?: any,
     EmailBody?: any,
     EmailTitle: string,
-    AdaptiveCardContent?: string
+    AdaptiveCardContent?: string,
+    AdditionalFileLink?:any
 }
 
 export interface formState {
@@ -132,7 +133,8 @@ export interface formState {
     imageHeight?: any,
     imageWidth?: any,
     errorEmailUrlMessage?: string,
-    fileUploadText?: string
+    fileUploadText?: string,
+    AdditionalFileLink?:any,
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -197,7 +199,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             sistertenantId: "",
             emailBodyContent: "",
             errorEmailUrlMessage: "",
-            fileUploadText: ""
+            fileUploadText: "",
+            AdditionalFileLink:""
         }
         this.fileInput = React.createRef();
         this.handleImagePDFSelection = this.handleImagePDFSelection.bind(this);
@@ -639,7 +642,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     }
                 }
                 else {
-                   if (draftMessageDetail.imageLink !== "") {
+                    if (draftMessageDetail.imageLink !== "") {
                         this.setState({
                             emailTitleText: true
                         })
@@ -764,6 +767,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                         onChange={this.handleImagePDFSelection}
                                                         ref={this.fileInput} />
                                                 }
+
+
+
                                                 <Flex.Item push>
                                                     <Button circular onClick={this.handleUploadClick}
                                                         size="small"
@@ -774,6 +780,41 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 </Flex.Item>
                                             </Flex>
                                             <Text className={(this.state.errorImageUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorImageUrlMessage} />
+                                            
+                                            <Flex gap="gap.smaller" vAlign="end" className="inputField">
+
+                                                {(this.state.templateType !== this.localize("ImageUpload")) ? <Input
+                                                    value={this.state.imageLink}
+                                                    label={this.localize("ImageURL")}
+                                                    placeholder={this.localize("ImageURLPlaceHolder")}
+                                                    onChange={this.onAdditionalImageLinkChanged}
+                                                    error={!(this.state.errorImageUrlMessage === "")}
+                                                    autoComplete="off"
+                                                    fluid
+                                                /> :
+                                                    <Text size="medium" content={this.localize("PDFUploadText")} />
+                                                }
+                                                {(this.state.templateType !== this.localize("ImageUpload")) ? <input type="file" accept=".png, .jpg, .jpeg, .gif"
+                                                    style={{ display: 'none' }}
+                                                    onChange={this.handleImagePDFSelection}
+                                                    ref={this.fileInput} /> :
+                                                    <input type="file" accept=".pdf"
+                                                        style={{ display: 'none' }}
+                                                        onChange={this.handleImagePDFSelection}
+                                                        ref={this.fileInput} />
+                                                }
+
+
+
+                                                <Flex.Item push>
+                                                    <Button circular onClick={this.handleUploadClick}
+                                                        size="small"
+                                                        icon={<FilesUploadIcon />}
+                                                        title={this.localize("UploadText")}
+                                                        styles={{ marginTop: "10px" }}
+                                                    />
+                                                </Flex.Item>
+                                            </Flex>
 
                                             <div className="textArea">
                                                 <Text content={this.localize("Summary")} />
@@ -856,7 +897,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 <div className="textArea">
                                                     <Flex gap="gap.large" vAlign="end" styles={{ marginTop: "10px" }}>
                                                         <Flex.Item push >
-                                                            <Button circular size="small" disabled={(this.state.questionAnswer.length == 6) || !(this.state.addQuestionError === "")} icon={<AddIcon />} title={this.localize("Add")} onClick={this.mcqLimitationCheck.bind(this)} />
+                                                            <Button circular size="small" disabled={(this.state.questionAnswer.length == 8) || !(this.state.addQuestionError === "")} icon={<AddIcon />} title={this.localize("Add")} onClick={this.addQuestionAnswer.bind(this)} />
                                                         </Flex.Item>
                                                     </Flex>
                                                 </div>
@@ -1499,7 +1540,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             TenantId: (this.state.selectedRadioBtn === "sistertenant") ? this.state.sistertenantId : this.state.tenantId,
             EmailBody: this.state.emailBodyContent,
             EmailTitle: this.state.emailFileTitle,
-            AdaptiveCardContent: JSON.stringify(this.card)
+            AdaptiveCardContent: JSON.stringify(this.card),
+            AdditionalFileLink:this.state.AdditionalFileLink
         };
 
 
@@ -1571,6 +1613,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, this.state.summary);
             setCardAuthorPDFUpload(this.card, this.state.author);
             setCardBtnsPDFUpload(this.card, this.state.values);
@@ -1580,7 +1623,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             setCardAuthorQuestionAnswer(this.card, this.state.author);
         }
         else {
-            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            let EmailLink = (this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
             setCardEmailTemplate(this.card, this.state.emailBodyContent, event.target.value, this.state.author, EmailLink, this.state.summary);
             // setCardTitleEmailTemplate(this.card, event.target.value);
             // setCardAuthorEmailTemplate(this.card, this.state.author);
@@ -1636,6 +1679,43 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
     }
 
+    private onAdditionalImageLinkChanged = (event: any) => {
+        let url = event.target.value.toLowerCase();
+        if (!((url === "") || (url.startsWith("https://") || (url.startsWith("data:image/png;base64,")) || (url.startsWith("data:image/jpeg;base64,")) || (url.startsWith("data:image/gif;base64,")) || (url.startsWith("data:application/pdf"))))) {
+            this.setState({
+                errorImageUrlMessage: this.localize("ErrorURLMessage")
+            });
+        } else {
+            this.setState({
+                errorImageUrlMessage: ""
+            });
+        }
+
+        let showDefaultCard = (!this.state.title && !event.target.value && !this.state.summary && !this.state.author && !this.state.btnTitle && !this.state.btnLink);
+        if (this.state.templateType === this.localize("PDFUpload")) {
+            setCardImageLinkPDF(this.card, event.target.value);
+            setCardTitlePDFUpload(this.card, this.state.title);
+            if (this.state.imageLink !== "") {
+                setCardImageLinkPDFUpload(this.card, pdfImgUrl);
+                let pdfLink = "[View PDF](" + this.state.imageLink + ")"
+                setCardPdfNamePDFUpload(this.card, pdfLink)
+            }
+            setCardSummaryPDFUpload(this.card, this.state.summary);
+            setCardAuthorPDFUpload(this.card, this.state.author);
+            setCardBtnsPDFUpload(this.card, this.state.values);
+        }
+        this.setState({
+            AdditionalFileLink: event.target.value,
+            card: this.card
+        }, () => {
+            if (showDefaultCard) {
+                this.setDefaultCard(this.card);
+            }
+            this.updateCard();
+        });
+    }
+
+
     private onSummaryChanged = (event: any) => {
         let showDefaultCard = (!this.state.title && !this.state.imageLink && !event.target.value && !this.state.author && !this.state.btnTitle && !this.state.btnLink);
         if (this.state.templateType === this.localize("ImageUpload")) {
@@ -1652,14 +1732,15 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, event.target.value);
             setCardAuthorPDFUpload(this.card, this.state.author);
             setCardBtnsPDFUpload(this.card, this.state.values);
         }
         else if (this.state.templateType === this.localize("EmailUpload")) {
-            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            let EmailLink = (this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
             setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, this.state.author, EmailLink, event.target.value)
-            
+
         }
         this.setState({
             summary: event.target.value,
@@ -1689,6 +1770,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, this.state.summary);
             setCardAuthorPDFUpload(this.card, event.target.value);
             setCardBtnsPDFUpload(this.card, this.state.values);
@@ -1699,9 +1781,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             // setCardBtnsQuestionAnswer(this.card, this.state.values);
         }
         else {
-            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            let EmailLink = (this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
             setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, event.target.value, EmailLink, this.state.summary)
-            
+
         }
         this.setState({
             author: event.target.value,
@@ -1718,9 +1800,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.setState({
             emailFileTitle: event.target.value
         }, () => {
-            let EmailLink =(this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
+            let EmailLink = (this.state.imageLink !== "") ? "[" + this.state.emailFileTitle + "](" + this.state.imageLink + ")" : ""
             setCardEmailTemplate(this.card, this.state.emailBodyContent, this.state.title, this.state.author, EmailLink, this.state.summary)
-            
+
             this.updateCard();
         });
     }
@@ -1798,6 +1880,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, this.state.summary);
             setCardAuthorPDFUpload(this.card, this.state.author);
         }
@@ -1813,7 +1896,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-           
+
             this.setState({
                 card: this.card
             }, () => {
@@ -1854,6 +1937,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, this.state.summary);
             setCardAuthorPDFUpload(this.card, this.state.author);
         }
@@ -1869,7 +1953,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.templateType === this.localize("PDFUpload")) {
                 setCardBtnsPDFUpload(this.card, values);
             }
-            
+
             this.setState({
                 card: this.card
             }, () => {
@@ -1919,6 +2003,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 let pdfLink = "[View PDF](" + this.state.imageLink + ")"
                 setCardPdfNamePDFUpload(this.card, pdfLink)
             }
+            setCardImageLinkPDF(this.card, this.state.AdditionalFileLink);
             setCardSummaryPDFUpload(this.card, this.state.summary);
             setCardAuthorPDFUpload(this.card, this.state.author);
         }
@@ -2068,24 +2153,24 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
     }
 
-    private mcqLimitationCheck() {
-        const mcqCount = this.state.questionAnswer.filter((e) => e.questionType === this.localize("MCQ"));
-        if (mcqCount.length < 2) {
-            this.setState({
-                questionTypeSelectedValueDisable: false
-            }, () => {
-                this.addQuestionAnswer()
-            })
-        }
-        else {
-            this.setState({
-                questionTypeSelectedValueDisable: true,
-                questionTypeSelectedValue: this.localize("DescriptiveQuestion"),
-            }, () => {
-                this.addQuestionAnswer()
-            })
-        }
-    }
+    // private mcqLimitationCheck() {
+    //     const mcqCount = this.state.questionAnswer.filter((e) => e.questionType === this.localize("MCQ"));
+    //     if (mcqCount.length < 2) {
+    //         this.setState({
+    //             questionTypeSelectedValueDisable: false
+    //         }, () => {
+    //             this.addQuestionAnswer()
+    //         })
+    //     }
+    //     else {
+    //         this.setState({
+    //             questionTypeSelectedValueDisable: true,
+    //             questionTypeSelectedValue: this.localize("DescriptiveQuestion"),
+    //         }, () => {
+    //             this.addQuestionAnswer()
+    //         })
+    //     }
+    // }
 
 
     //private function to deal with changes in the questions
@@ -2154,14 +2239,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         let questionAnswer = [...this.state.questionAnswer];
         questionAnswer.splice(i, 1);
-        this.setState({ questionAnswer }, () => {
-            const mcqCount = this.state.questionAnswer.filter((e) => e.questionType === this.localize("MCQ"));
-            if (mcqCount.length < 2) {
-                this.setState({
-                    questionTypeSelectedValueDisable: false
-                })
-            }
-        });
+        this.setState({ questionAnswer });
         this.setState({
             addQuestionError: ""
         });
